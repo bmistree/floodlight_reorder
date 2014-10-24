@@ -35,6 +35,14 @@ public class FloodlightReorder
         switch_listeners_to_register = _switch_listeners_to_register;
     }
 
+    /**
+       @returns null if switch with switch_id does not exist.
+     */
+    public IOFSwitch get_switch(long switch_id)
+    {
+        return floodlight_provider.getSwitch(switch_id);
+    }
+    
     /** IFloodlightModule overrides */
     @Override
     public void init(FloodlightModuleContext context)
