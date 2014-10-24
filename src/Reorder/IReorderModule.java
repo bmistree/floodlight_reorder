@@ -1,7 +1,9 @@
 package Reorder;
 
-import net.floodlightcontroller.core.IOFSwitch;
 import java.io.IOException;
+
+import net.floodlightcontroller.core.IOFSwitch;
+
 
 public interface IReorderModule
 {
