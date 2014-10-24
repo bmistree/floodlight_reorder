@@ -1,0 +1,38 @@
+<project name="Reorder" default="compile" basedir=".">
+  <description>
+    Reorder modules
+  </description>
+
+  <dirname
+    property="reorder_build_dir"
+    file="${ant.file.Reorder}"
+  />
+
+  <!-- Floodlight locations -->
+  <property
+      name="floodlight_jar_dir"
+      location="${reorder_build_dir}/../floodlight/target/"/>
+
+  <property
+      name="floodlight_jar"
+      location="${floodlight_jar_dir}/floodlight.jar"/>
+
+  <!-- Where to store java class files -->
+  <property
+      name="reorder_classes_dir"
+      location="${reorder_build_dir}/classes/"/>
+  
+
+  <!-- Sets up initial directories -->
+  <target name="init" description="setup build directories">
+    <echo message="Setting up build directories for pronghorn"/>
+    <mkdir dir="${reorder_classes_dir}"/>
+  </target>
+
+  
+  <!-- Removes initial directories -->
+  <target name="clean" description="get rid of build dir">
+    <delete dir="${reorder_classes_dir}"/>
+  </target>
+  
+</project>
