@@ -22,11 +22,28 @@
       name="reorder_classes_dir"
       location="${reorder_build_dir}/classes/"/>
   
-
+  <property
+      name="src_dir"
+      location="${reorder_build_dir}/../src/"/>
+  
   <!-- Sets up initial directories -->
   <target name="init" description="setup build directories">
     <echo message="Setting up build directories for pronghorn"/>
     <mkdir dir="${reorder_classes_dir}"/>
+  </target>
+
+
+  <target name="compile_reorder_package"
+          depends="init"
+          description="compile reorder package">
+    <!-- Compile all ralph java to bytecode -->
+    <javac
+        srcdir="${src_dir}"
+        destdir="${reorder_classes_dir}"
+        classpath="${floodlight_jar}"
+        debug="true"
+        debuglevel="lines,vars,source"
+        includeantruntime="false" />
   </target>
 
   
