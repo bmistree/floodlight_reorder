@@ -27,6 +27,11 @@ public class FloodlightReorder
     protected ILinkDiscoveryService link_discovery_service = null;
 
 
+    public void register_switch_listener(IOFSwitchListener switch_listener)
+    {
+        floodlight_provider.addOFSwitchListener(switch_listener);
+    }
+
     /** IFloodlightModule overrides */
     @Override
     public void init(FloodlightModuleContext context)
