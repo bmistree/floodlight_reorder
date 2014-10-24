@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
@@ -26,10 +27,12 @@ public class FloodlightReorder
     protected IFloodlightProviderService floodlight_provider = null;
     protected ILinkDiscoveryService link_discovery_service = null;
 
-
-    public void register_switch_listener(IOFSwitchListener switch_listener)
+    protected final Set<IOFSwitchListener> switch_listeners_to_register;
+    
+    public FloodlightReorder(
+        Set<IOFSwitchListener> _switch_listeners_to_register)
     {
-        floodlight_provider.addOFSwitchListener(switch_listener);
+        switch_listeners_to_register = _switch_listeners_to_register;
     }
 
     /** IFloodlightModule overrides */
@@ -39,6 +42,9 @@ public class FloodlightReorder
     {
         floodlight_provider = context.getServiceImpl(IFloodlightProviderService.class);
         link_discovery_service = context.getServiceImpl(ILinkDiscoveryService.class);
+
+        for (IOFSwitchListener switch_listener : switch_listeners_to_register)
+            floodlight_provider.addOFSwitchListener(switch_listener);            
     }
 
 
