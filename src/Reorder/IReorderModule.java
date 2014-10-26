@@ -16,4 +16,9 @@ public interface IReorderModule
        @returns true if got a reordering; false if did not.
      */
     public boolean try_to_reorder();
+
+    /**
+       @returns name of module.
+     */
+    public String reorder_module_name();
 }
