@@ -25,6 +25,11 @@
   <property
       name="src_dir"
       location="${reorder_build_dir}/../src/"/>
+
+  <property
+      name="floodlight_modules_file"
+      location="${reorder_build_dir}/floodlight_modules/floodlight.modules"/>
+  
   
   <!-- Sets up initial directories -->
   <target name="init" description="setup build directories">
@@ -46,10 +51,45 @@
         includeantruntime="false" />
   </target>
 
+
+  <!-- Run pronghorn connected to floodlight -->
+  <property
+      name="reorder_jar"
+      value="reorder.jar"/>
+  <target
+      name="reorder_jar"
+      depends="compile_reorder_package"
+      description="Generate a jar for reorder testing.">
+    <antcall target="make_jar">
+      <param name="main_class" value="Reorder.Main"/>
+      <param name="dest_jar" value="${reorder_jar}"/>
+    </antcall>
+  </target>
+
+  
+
+  <!-- Run pronghorn connected to floodlight -->
+  <target
+      name="make_jar"
+      description="Make a jar">
+    <jar destfile="${dest_jar}" filesetmanifest="mergewithoutmain">
+      <manifest>
+        <attribute name="Main-Class" value="${main_class}"/>
+        <attribute name="Class-Path"
+                   value="${reorder_classes_dir}:
+                          ${floodlight_jar}"/>
+      </manifest>
+      <fileset dir="${reorder_classes_dir}"/>
+      <fileset file="${floodlight_modules_file}"/>
+      <zipgroupfileset dir="${floodlight_jar_dir}" includes="**/*.jar" />
+    </jar>
+  </target>
+
   
   <!-- Removes initial directories -->
   <target name="clean" description="get rid of build dir">
     <delete dir="${reorder_classes_dir}"/>
+    <delete file="${reorder_jar}"/>
   </target>
   
 </project>
