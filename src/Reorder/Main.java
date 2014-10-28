@@ -8,8 +8,8 @@ public class Main
     public static void main(String[] args)
     {
         List<IReorderModule> reorder_modules_to_run =
-            ReorderModuleProducer.parse_reorder_args(args);
-
+            ReorderModuleProducer.INSTANCE.parse_reorder_args(args);
+        
         ReorderRunner reorder_runner =
             new ReorderRunner(reorder_modules_to_run);
 

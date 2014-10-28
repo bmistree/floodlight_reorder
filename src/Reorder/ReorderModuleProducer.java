@@ -7,14 +7,24 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class ReorderModuleProducer
+public enum ReorderModuleProducer
 {
-    private final static String MODULE_ARG="reorder_modules=";
+    INSTANCE;
+        
+    protected final String MODULE_ARG="reorder_modules=";
     
-    private static final Map<String,IReorderModuleFactory> reorder_modules =
+    protected final Map<String,IReorderModuleFactory> reorder_modules =
         new HashMap<String,IReorderModuleFactory>();
 
-    public static List<IReorderModule> parse_reorder_args(
+    ReorderModuleProducer()
+    {
+        add_reorder_module(
+            SingleThreadAddRemoveModule.REORDER_NAME,
+            SingleThreadAddRemoveModule.Factory.INSTANCE);
+    }
+
+    
+    public List<IReorderModule> parse_reorder_args(
         String[] args)
     {
         List<IReorderModule> to_return = new ArrayList<IReorderModule>();
@@ -55,13 +65,13 @@ public class ReorderModuleProducer
         return to_return;
     }
     
-    public static void add_reorder_module(
+    protected void add_reorder_module(
         String module_name, IReorderModuleFactory factory)
     {
         reorder_modules.put(module_name,factory);
     }
     
-    public static IReorderModule get_module(String module_name)
+    public IReorderModule get_module(String module_name)
     {
         if (! reorder_modules.containsKey(module_name))
             return null;
