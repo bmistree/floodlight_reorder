@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.HashSet;
 
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
@@ -24,17 +25,29 @@ import org.openflow.protocol.OFType;
 public class FloodlightReorder
     implements IFloodlightModule, IOFMessageListener
 {
+    public static String FLOODLIGHT_REORDER_NAME = "FloodlightReorderer";
+
+    
     protected IFloodlightProviderService floodlight_provider = null;
     protected ILinkDiscoveryService link_discovery_service = null;
 
-    protected final Set<IOFSwitchListener> switch_listeners_to_register;
+    protected final Set<IOFSwitchListener> switch_listeners_to_register =
+        new HashSet<IOFSwitchListener>();
+    protected boolean has_initialized = false;
+
     
-    public FloodlightReorder(
-        Set<IOFSwitchListener> _switch_listeners_to_register)
+    public synchronized void add_switch_listener(
+        IOFSwitchListener switch_listener)
     {
-        switch_listeners_to_register = _switch_listeners_to_register;
+        if (! has_initialized)
+        {
+            switch_listeners_to_register.add(switch_listener);
+            return;
+        }
+        floodlight_provider.addOFSwitchListener(switch_listener);
     }
 
+    
     /**
        @returns null if switch with switch_id does not exist.
      */
@@ -45,16 +58,17 @@ public class FloodlightReorder
     
     /** IFloodlightModule overrides */
     @Override
-    public void init(FloodlightModuleContext context)
+    public synchronized void init(FloodlightModuleContext context)
         throws FloodlightModuleException
     {
         floodlight_provider = context.getServiceImpl(IFloodlightProviderService.class);
         link_discovery_service = context.getServiceImpl(ILinkDiscoveryService.class);
 
         for (IOFSwitchListener switch_listener : switch_listeners_to_register)
-            floodlight_provider.addOFSwitchListener(switch_listener);            
+            floodlight_provider.addOFSwitchListener(switch_listener);
+        has_initialized = true;
     }
-
+    
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleDependencies()
@@ -107,9 +121,8 @@ public class FloodlightReorder
     @Override
     public String getName()
     {
-        return "FloodlightReorderer";
+        return FLOODLIGHT_REORDER_NAME;
     }
-
 
     @Override
     public boolean isCallbackOrderingPrereq(OFType type, String name)
