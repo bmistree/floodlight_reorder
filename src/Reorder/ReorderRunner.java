@@ -102,7 +102,7 @@ public class ReorderRunner
         }
         //// DEBUG
         if (floodlight_reorder_module == null)
-            assert(false);
+            Util.force_assert("No floodlight reorder module");
         //// END DEBUG
         
         floodlight_reorder_module.add_switch_listener(switch_listener);
