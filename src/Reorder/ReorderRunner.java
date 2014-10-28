@@ -84,7 +84,7 @@ public class ReorderRunner
             new FloodlightModuleLoader();
 
         IFloodlightModuleContext module_context =
-            floodlight_module_loader.loadModulesFromConfig(
+            floodlight_module_loader.load_modules_from_class_loader(
                 DEFAULT_MODULE_CONFIG_FILENAME);
 
         IFloodlightProviderService controller =
@@ -92,7 +92,7 @@ public class ReorderRunner
 
         Collection<IFloodlightModule> all_modules = module_context.getAllModules();
         for (IFloodlightModule floodlight_module : all_modules)
-        {
+        {            
             if (floodlight_module.getClass() == FloodlightReorder.class)
             {
                 floodlight_reorder_module =
