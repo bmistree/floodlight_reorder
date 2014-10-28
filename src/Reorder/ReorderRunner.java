@@ -1,7 +1,6 @@
 package Reorder;
 
-import java.util.Set;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Collection;
 
 import net.floodlightcontroller.core.IOFSwitch;
@@ -16,20 +15,25 @@ public class ReorderRunner
 {
     public final static String DEFAULT_MODULE_CONFIG_FILENAME =
         "floodlight.modules";
-    
-    protected final Set<IReorderModule> reorder_module_set;
-    protected final WaitOnSwitchActivated wait_on_switch_activated;
+    protected final List<IReorderModule> reorder_module_list;
 
     /** Gets set in start_floodlight */
     protected FloodlightReorder floodlight_reorder_module = null;
     
-    public ReorderRunner(
-        Set<IReorderModule> _reorder_module_set,
-        WaitOnSwitchActivated _wait_on_switch_activated)
+    public ReorderRunner(List<IReorderModule> _reorder_module_list)
     {
-        reorder_module_set = _reorder_module_set;
-        wait_on_switch_activated = _wait_on_switch_activated;
+        reorder_module_list = _reorder_module_list;
+    }
 
+
+    /**
+       @returns true if got a reordering; false if did not.
+     */
+    public boolean try_to_reorder()
+    {
+        final WaitOnSwitchActivated wait_on_switch_activated =
+            new WaitOnSwitchActivated();
+        
         final ReorderRunner tmp_this = this;
         Thread t = new Thread()
         {
@@ -48,9 +52,31 @@ public class ReorderRunner
         };
         t.setDaemon(true);
         t.start();
+
+        long switch_id = wait_on_switch_activated.get_switch_id();
+        IOFSwitch of_switch = floodlight_reorder_module.get_switch(switch_id);
+        return run_modules(of_switch);
+    }
+
+    /**
+       @returns true if got a reordering; false if did not.
+     */
+    protected boolean run_modules(IOFSwitch of_switch)
+    {
+        boolean to_return = false;
+
+        for (IReorderModule reorder_module : reorder_module_list)
+        {
+            reorder_module.init(of_switch);
+            boolean got_reordered = reorder_module.try_to_reorder();
+            to_return = to_return || got_reordered;
+        }
+        return to_return;
     }
     
-    public void start_floodlight(IOFSwitchListener switch_listener)
+    
+    
+    protected void start_floodlight(IOFSwitchListener switch_listener)
         throws FloodlightModuleException
     {
         // Load modules
@@ -68,8 +94,6 @@ public class ReorderRunner
         for (IFloodlightModule floodlight_module : all_modules)
         {
             if (floodlight_module.getClass() == FloodlightReorder.class)
-            // if (floodlight_module.getName().equals(
-            //         FloodlightReorder.FLOODLIGHT_REORDER_NAME))
             {
                 floodlight_reorder_module =
                     (FloodlightReorder)floodlight_module;
@@ -83,24 +107,5 @@ public class ReorderRunner
         
         floodlight_reorder_module.add_switch_listener(switch_listener);
         controller.run();
-    }
-
-    
-    /**
-       @returns true if got a reordering; false if did not.
-     */
-    public boolean try_to_reorder()
-    {
-        boolean to_return = false;
-        long switch_id = wait_on_switch_activated.get_switch_id();
-        IOFSwitch of_switch = floodlight_reorder_module.get_switch(switch_id);
-
-        for (IReorderModule reorder_module : reorder_module_set)
-        {
-            reorder_module.init(of_switch);
-            boolean got_reordered = reorder_module.try_to_reorder();
-            to_return = to_return || got_reordered;
-        }
-        return to_return;
-    }
+    }    
 }
