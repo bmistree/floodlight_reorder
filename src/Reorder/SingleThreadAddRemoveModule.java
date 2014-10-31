@@ -40,7 +40,7 @@ public class SingleThreadAddRemoveModule implements IReorderModule
         Util.wait_on_barrier(synced_switch);
 
         // if no reorderings, should not have any entries in switch.
-        int num_entries = Util.num_entries(synced_switch);
+        int num_entries = synced_switch.flow_table_entry_size();
         if (num_entries != 0)
             return true;
         return false;

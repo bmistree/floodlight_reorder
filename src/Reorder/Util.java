@@ -1,5 +1,6 @@
 package Reorder;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import net.floodlightcontroller.util.MACAddress;
@@ -8,8 +9,9 @@ import net.floodlightcontroller.core.IOFSwitch;
 import org.openflow.protocol.OFOXMFieldType;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFFlowMod;
+import org.openflow.protocol.OFStatisticsReply;
 import org.openflow.protocol.instruction.OFInstruction;
-
+import org.openflow.protocol.statistics.OFStatistics;
 
 public class Util
 {
@@ -19,12 +21,12 @@ public class Util
         assert(false);
         System.exit(-1);
     }
-
+    
     public static void log_warn(String message)
     {
         System.out.println(message);
     }
-    
+
     public static void clear_flow_table(IOFSwitch of_switch)
     {
         SynchronizedSwitch synced_switch = new SynchronizedSwitch(of_switch);
@@ -43,18 +45,11 @@ public class Util
         // wait until has been cleared.
         wait_on_barrier(synced_switch);
     }
-    
 
     public static int num_entries(IOFSwitch of_switch)
     {
         SynchronizedSwitch synced_switch = new SynchronizedSwitch(of_switch);
-        return num_entries(synced_switch);
-    }
-
-    public static int num_entries(SynchronizedSwitch synced_switch)
-    {
-        log_warn("Still need to collect number entries.");
-        return 0;
+        return synced_switch.flow_table_entry_size();
     }
     
     public static void wait_on_barrier(IOFSwitch of_switch)

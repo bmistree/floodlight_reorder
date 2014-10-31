@@ -19,13 +19,17 @@ import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.core.FloodlightContext;
 
 import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFStatisticsReply;
 import org.openflow.protocol.OFType;
+
 
 public class FloodlightReorder
     implements IFloodlightModule, IOFMessageListener
 {
     public static String FLOODLIGHT_REORDER_NAME = "FloodlightReorderer";
 
+    public final FloodlightMVar floodlight_mvar = new FloodlightMVar();
+    
     
     protected IFloodlightProviderService floodlight_provider = null;
     protected ILinkDiscoveryService link_discovery_service = null;
@@ -59,8 +63,10 @@ public class FloodlightReorder
     public synchronized void init(FloodlightModuleContext context)
         throws FloodlightModuleException
     {
-        floodlight_provider = context.getServiceImpl(IFloodlightProviderService.class);
-        link_discovery_service = context.getServiceImpl(ILinkDiscoveryService.class);
+        floodlight_provider =
+            context.getServiceImpl(IFloodlightProviderService.class);
+        link_discovery_service =
+            context.getServiceImpl(ILinkDiscoveryService.class);
 
         for (IOFSwitchListener switch_listener : switch_listeners_to_register)
             floodlight_provider.addOFSwitchListener(switch_listener);
@@ -102,9 +108,10 @@ public class FloodlightReorder
     {
         floodlight_provider.addOFMessageListener(OFType.BARRIER_REPLY, this);
         floodlight_provider.addOFMessageListener(OFType.ERROR, this);
-        floodlight_provider.addOFMessageListener(OFType.STATS_REPLY, this);
+        //floodlight_provider.addOFMessageListener(OFType.STATS_REPLY, this);
     }
 
+    
     /** IOFMessageListener overrides */
     @Override
     public net.floodlightcontroller.core.IListener.Command receive(
@@ -112,20 +119,15 @@ public class FloodlightReorder
     {
         if (msg.getType() == OFType.BARRIER_REPLY)
         {
-            Util.force_assert(
-                "FIXME: must still fill in barrier_reply handler");
+            floodlight_mvar.barrier_finished.set(true);
+            return Command.CONTINUE;
         }
         else if (msg.getType() == OFType.ERROR)
         {
             Util.force_assert(
                 "FIXME: must still fill in error_reply handler");
         }
-        else if (msg.getType() == OFType.STATS_REPLY)
-        {
-            Util.force_assert(
-                "FIXME: must still fill in stats_reply handler");
-        }
-
+        
         Util.force_assert(
             "Unknown received message type in floodlight reorder");
         return null;
