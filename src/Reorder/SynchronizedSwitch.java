@@ -14,9 +14,16 @@ public class SynchronizedSwitch
         of_switch = _of_switch;
     }
 
-    public synchronized void write (
-        OFMessage m, FloodlightContext bc) throws IOException
+    public synchronized void write (OFMessage m, FloodlightContext bc)
     {
-        of_switch.write(m,bc);
+        try
+        {
+            of_switch.write(m,bc);
+        }
+        catch(IOException ex)
+        {
+            ex.printStackTrace();
+            Util.force_assert("IOException on write.");
+        }
     }
 }

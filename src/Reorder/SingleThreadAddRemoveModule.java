@@ -32,6 +32,17 @@ public class SingleThreadAddRemoveModule implements IReorderModule
     @Override
     public boolean try_to_reorder()
     {
+        // apply lots of changes.
+        for (OFFlowMod flow_mod : flowmod_list)
+            synced_switch.write(flow_mod,null);
+
+        // wait for changes to be applied
+        Util.wait_on_barrier(synced_switch);
+
+        // if no reorderings, should not have any entries in switch.
+        int num_entries = Util.num_entries(synced_switch);
+        if (num_entries != 0)
+            return true;
         return false;
     }
     

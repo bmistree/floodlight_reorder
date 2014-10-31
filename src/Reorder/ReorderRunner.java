@@ -70,11 +70,13 @@ public class ReorderRunner
             reorder_module.init(of_switch);
             boolean got_reordered = reorder_module.try_to_reorder();
             to_return = to_return || got_reordered;
+
+            // clear previous table for next module to run.
+            Util.clear_flow_table(of_switch);
         }
         return to_return;
     }
-    
-    
+
     
     protected void start_floodlight(IOFSwitchListener switch_listener)
         throws FloodlightModuleException
