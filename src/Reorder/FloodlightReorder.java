@@ -10,7 +10,6 @@ import java.util.HashSet;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.core.IOFMessageListener;
-import org.openflow.protocol.OFMessage;
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.core.IOFSwitchListener;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
@@ -19,7 +18,7 @@ import net.floodlightcontroller.core.IFloodlightProviderService;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.core.FloodlightContext;
 
-
+import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFType;
 
 public class FloodlightReorder
@@ -46,7 +45,6 @@ public class FloodlightReorder
         }
         floodlight_provider.addOFSwitchListener(switch_listener);
     }
-
     
     /**
        @returns null if switch with switch_id does not exist.
@@ -104,6 +102,7 @@ public class FloodlightReorder
     {
         floodlight_provider.addOFMessageListener(OFType.BARRIER_REPLY, this);
         floodlight_provider.addOFMessageListener(OFType.ERROR, this);
+        floodlight_provider.addOFMessageListener(OFType.STATS_REPLY, this);
     }
 
     /** IOFMessageListener overrides */
@@ -111,10 +110,24 @@ public class FloodlightReorder
     public net.floodlightcontroller.core.IListener.Command receive(
         IOFSwitch sw, OFMessage msg, FloodlightContext cntx)
     {
-        /**
-           FIXME: must finish implementation of this method.
-         */
-        assert(false);
+        if (msg.getType() == OFType.BARRIER_REPLY)
+        {
+            Util.force_assert(
+                "FIXME: must still fill in barrier_reply handler");
+        }
+        else if (msg.getType() == OFType.ERROR)
+        {
+            Util.force_assert(
+                "FIXME: must still fill in error_reply handler");
+        }
+        else if (msg.getType() == OFType.STATS_REPLY)
+        {
+            Util.force_assert(
+                "FIXME: must still fill in stats_reply handler");
+        }
+
+        Util.force_assert(
+            "Unknown received message type in floodlight reorder");
         return null;
     }
 
