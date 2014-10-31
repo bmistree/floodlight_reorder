@@ -12,6 +12,8 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFStatisticsReply;
 import org.openflow.protocol.instruction.OFInstruction;
 import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFType;
 
 public class Util
 {
@@ -27,13 +29,15 @@ public class Util
         System.out.println(message);
     }
 
-    public static void clear_flow_table(IOFSwitch of_switch)
+    public static void clear_flow_table(
+        IOFSwitch of_switch,FloodlightReorder floodlight_reorder)
     {
         SynchronizedSwitch synced_switch = new SynchronizedSwitch(of_switch);
-        clear_flow_table(synced_switch);
+        clear_flow_table(synced_switch,floodlight_reorder);
     }
 
-    public static void clear_flow_table(SynchronizedSwitch synced_switch)
+    public static void clear_flow_table(
+        SynchronizedSwitch synced_switch, FloodlightReorder floodlight_reorder)
     {
         // generate a flow mod to clear full table
         OFFlowMod flow_mod = new OFFlowMod();
@@ -43,13 +47,23 @@ public class Util
         synced_switch.write(flow_mod,null);
 
         // wait until has been cleared.
-        wait_on_barrier(synced_switch);
+        issue_barrier_and_wait(synced_switch,floodlight_reorder);
     }
 
     public static int num_entries(IOFSwitch of_switch)
     {
         SynchronizedSwitch synced_switch = new SynchronizedSwitch(of_switch);
         return synced_switch.flow_table_entry_size();
+    }
+
+    public static void issue_barrier_and_wait(
+        SynchronizedSwitch synced_switch,FloodlightReorder floodlight_reorder)
+    {
+        OFMessage barrier_request =
+            floodlight_reorder.floodlight_provider.getOFMessageFactory().getMessage(
+                OFType.BARRIER_REQUEST);
+        synced_switch.write(barrier_request,null);
+        floodlight_reorder.floodlight_mvar.barrier_finished.blocking_get();
     }
     
     public static void wait_on_barrier(IOFSwitch of_switch)

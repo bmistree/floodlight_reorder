@@ -31,7 +31,7 @@ public class FloodlightReorder
     public final FloodlightMVar floodlight_mvar = new FloodlightMVar();
     
     
-    protected IFloodlightProviderService floodlight_provider = null;
+    public IFloodlightProviderService floodlight_provider = null;
     protected ILinkDiscoveryService link_discovery_service = null;
 
     protected final Set<IOFSwitchListener> switch_listeners_to_register =

@@ -67,12 +67,12 @@ public class ReorderRunner
 
         for (IReorderModule reorder_module : reorder_module_list)
         {
-            reorder_module.init(of_switch);
+            reorder_module.init(of_switch,floodlight_reorder_module);
             boolean got_reordered = reorder_module.try_to_reorder();
             to_return = to_return || got_reordered;
 
             // clear previous table for next module to run.
-            Util.clear_flow_table(of_switch);
+            Util.clear_flow_table(of_switch,floodlight_reorder_module);
         }
         return to_return;
     }

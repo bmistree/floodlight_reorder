@@ -8,10 +8,12 @@ import net.floodlightcontroller.core.IOFSwitch;
 public interface IReorderModule
 {
     /**
-       @param switch_to_send_commands_to --- The switcht that we are
+       @param switch_to_send_commands_to --- The switch that we are
        trying to cause to reorder our commands.
      */
-    public void init(IOFSwitch switch_to_send_commands_to);
+    public void init(
+        IOFSwitch switch_to_send_commands_to,
+        FloodlightReorder floodlight_reorder);
     /**
        @returns true if got a reordering; false if did not.
      */

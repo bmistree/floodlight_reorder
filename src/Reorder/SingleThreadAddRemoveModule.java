@@ -12,11 +12,11 @@ public class SingleThreadAddRemoveModule implements IReorderModule
     public final static int NUM_ADDS = 10000;
     
     protected SynchronizedSwitch synced_switch = null;
-    protected final List<OFFlowMod> flowmod_list;
+    protected FloodlightReorder floodlight_reorder = null;
+    protected final List<OFFlowMod> flowmod_list = new ArrayList<OFFlowMod>();
 
     public SingleThreadAddRemoveModule()
     {
-        flowmod_list = new ArrayList<OFFlowMod>();
         for (int i =0; i < NUM_ADDS; ++i)
         {
             // flow mod add,
@@ -37,8 +37,8 @@ public class SingleThreadAddRemoveModule implements IReorderModule
             synced_switch.write(flow_mod,null);
 
         // wait for changes to be applied
-        Util.wait_on_barrier(synced_switch);
-
+        Util.issue_barrier_and_wait(synced_switch,floodlight_reorder);
+        
         // if no reorderings, should not have any entries in switch.
         int num_entries = synced_switch.flow_table_entry_size();
         if (num_entries != 0)
@@ -47,9 +47,12 @@ public class SingleThreadAddRemoveModule implements IReorderModule
     }
     
     @Override
-    public void init(IOFSwitch switch_to_send_commands_to)
+    public void init(
+        IOFSwitch switch_to_send_commands_to,
+        FloodlightReorder _floodlight_reorder)
     {
         synced_switch = new SynchronizedSwitch(switch_to_send_commands_to);
+        floodlight_reorder = _floodlight_reorder;
     }
 
     @Override
