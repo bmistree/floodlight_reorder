@@ -6,9 +6,9 @@ import net.floodlightcontroller.util.MACAddress;
 import net.floodlightcontroller.core.IOFSwitch;
 
 import org.openflow.protocol.OFOXMFieldType;
-import org.openflow.protocol.instruction.OFInstruction;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFFlowMod;
+import org.openflow.protocol.instruction.OFInstruction;
 
 
 public class Util
