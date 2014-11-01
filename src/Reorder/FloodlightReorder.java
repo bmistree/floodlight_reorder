@@ -125,7 +125,8 @@ public class FloodlightReorder
         else if (msg.getType() == OFType.ERROR)
         {
             Util.force_assert(
-                "FIXME: must still fill in error_reply handler");
+                "FIXME: must still fill in error_reply handler " +
+                msg.toString());
         }
         
         Util.force_assert(

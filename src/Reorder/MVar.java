@@ -17,6 +17,7 @@ public class MVar<TypeName>
         has_been_written = true;
         internal = to_set;
         condition.signal();
+        lock.unlock();
     }
     
     public TypeName blocking_get()

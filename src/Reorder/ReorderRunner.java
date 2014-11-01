@@ -64,7 +64,6 @@ public class ReorderRunner
     protected boolean run_modules(IOFSwitch of_switch)
     {
         boolean to_return = false;
-
         for (IReorderModule reorder_module : reorder_module_list)
         {
             reorder_module.init(of_switch,floodlight_reorder_module);

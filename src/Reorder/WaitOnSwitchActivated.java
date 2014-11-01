@@ -66,6 +66,7 @@ public class WaitOnSwitchActivated implements IOFSwitchListener
         switch_id_set = true;
         of_switch_id = switch_id;
         set_condition.signalAll();
+        set_lock.unlock();
     }
 
     
