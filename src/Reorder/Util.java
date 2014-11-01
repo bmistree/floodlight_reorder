@@ -66,26 +66,6 @@ public class Util
         floodlight_reorder.floodlight_mvar.barrier_finished.blocking_get();
     }
     
-    public static void wait_on_barrier(IOFSwitch of_switch)
-    {
-        SynchronizedSwitch synced_switch = new SynchronizedSwitch(of_switch);
-        wait_on_barrier(synced_switch);
-    }
-    public static void wait_on_barrier(SynchronizedSwitch synced_switch)
-    {
-        // FIXME: should use proper barrier here.
-        try
-        {
-            Thread.sleep(10000);
-        }
-        catch (InterruptedException ex)
-        {
-            ex.printStackTrace();
-            force_assert(
-                "Received interrupted exception for clear_flow_table");
-        }        
-    }
-    
     public static OFFlowMod generate_add_flow_mod(long src_ethernet_addr)
     {
         return generate_flow_mod(src_ethernet_addr,true);

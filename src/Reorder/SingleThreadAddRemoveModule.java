@@ -9,7 +9,8 @@ import org.openflow.protocol.OFFlowMod;
 public class SingleThreadAddRemoveModule implements IReorderModule
 {
     public final static String REORDER_NAME = "SingleThreadAddRemove";
-    public final static int NUM_ADDS = 10000;
+    //public final static int NUM_ADDS = 10000;
+    public final static int NUM_ADDS = 500000;
     
     protected SynchronizedSwitch synced_switch = null;
     protected FloodlightReorder floodlight_reorder = null;
