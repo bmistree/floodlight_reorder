@@ -13,8 +13,6 @@ import net.floodlightcontroller.core.IFloodlightProviderService;
 
 public class ReorderRunner
 {
-    public final static String DEFAULT_MODULE_CONFIG_FILENAME =
-        "floodlight.modules";
     protected final List<IReorderModule> reorder_module_list;
 
     /** Gets set in start_floodlight */
@@ -89,10 +87,9 @@ public class ReorderRunner
         // Load modules
         FloodlightModuleLoader floodlight_module_loader =
             new FloodlightModuleLoader();
-
+        
         IFloodlightModuleContext module_context =
-            floodlight_module_loader.load_modules_from_class_loader(
-                DEFAULT_MODULE_CONFIG_FILENAME);
+            floodlight_module_loader.loadDefaultModules();
 
         IFloodlightProviderService controller =
             module_context.getServiceImpl(IFloodlightProviderService.class);
