@@ -23,8 +23,12 @@
       location="${reorder_build_dir}/classes/"/>
   
   <property
-      name="src_dir"
-      location="${reorder_build_dir}/../src/"/>
+      name="src_dir_reorder"
+      location="${reorder_build_dir}/../src/Reorder"/>
+  <property
+      name="src_dir_one_three"
+      location="${reorder_build_dir}/../src/OneThree"/>
+  
 
   
   <!-- Sets up initial directories -->
@@ -34,12 +38,12 @@
   </target>
 
 
-  <target name="compile_reorder_package"
+  <target name="compile_reorder_package_one_three"
           depends="init"
           description="compile reorder package">
     <!-- Compile all ralph java to bytecode -->
     <javac
-        srcdir="${src_dir}"
+        srcdir="${src_dir_reorder}:${src_dir_one_three}"
         destdir="${reorder_classes_dir}"
         classpath="${floodlight_one_three_jar}"
         debug="true"
@@ -54,7 +58,7 @@
       value="one_three_reorder.jar"/>
   <target
       name="jar_one_three_reorder"
-      depends="compile_reorder_package"
+      depends="compile_reorder_package_one_three"
       description="Generate a jar for reorder testing.">
     <antcall target="make_jar">
       <param name="main_class" value="OneThree.Main"/>
