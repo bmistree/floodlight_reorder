@@ -54,15 +54,15 @@
 
   <!-- Run pronghorn connected to floodlight -->
   <property
-      name="reorder_jar"
-      value="reorder.jar"/>
+      name="jar_one_three_reorder"
+      value="one_three_reorder.jar"/>
   <target
-      name="reorder_jar"
+      name="jar_one_three_reorder"
       depends="compile_reorder_package"
       description="Generate a jar for reorder testing.">
     <antcall target="make_jar">
-      <param name="main_class" value="Reorder.Main"/>
-      <param name="dest_jar" value="${reorder_jar}"/>
+      <param name="main_class" value="OneThree.Main"/>
+      <param name="dest_jar" value="${jar_one_three_reorder}"/>
     </antcall>
   </target>
 
@@ -89,7 +89,7 @@
   <!-- Removes initial directories -->
   <target name="clean" description="get rid of build dir">
     <delete dir="${reorder_classes_dir}"/>
-    <delete file="${reorder_jar}"/>
+    <delete file="${jar_one_three_reorder}"/>
   </target>
   
 </project>

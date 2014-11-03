@@ -12,6 +12,7 @@ public interface IReorderModule
        trying to cause to reorder our commands.
      */
     public void init(
+        IProtocolUtil protocol_util,
         IOFSwitch switch_to_send_commands_to,
         FloodlightReorder floodlight_reorder);
     /**

@@ -1,7 +1,9 @@
-package Reorder;
+package OneThree;
 
 import java.util.List;
-
+import Reorder.IReorderModule;
+import Reorder.ReorderModuleProducer;
+import Reorder.ReorderRunner;
 
 public class Main
 {
@@ -11,7 +13,9 @@ public class Main
             ReorderModuleProducer.INSTANCE.parse_reorder_args(args);
         
         ReorderRunner reorder_runner =
-            new ReorderRunner(reorder_modules_to_run);
+            new ReorderRunner(
+                reorder_modules_to_run,
+                OneThreeProtocolUtil.INSTANCE);
 
         if (reorder_runner.try_to_reorder())
             System.out.println("\n\nGot a reordering\n\n");

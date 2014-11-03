@@ -19,10 +19,14 @@ public class ReorderRunner
 
     /** Gets set in start_floodlight */
     protected FloodlightReorder floodlight_reorder_module = null;
+    protected final IProtocolUtil protocol_util;
     
-    public ReorderRunner(List<IReorderModule> _reorder_module_list)
+    public ReorderRunner(
+        List<IReorderModule> _reorder_module_list,
+        IProtocolUtil _protocol_util)
     {
         reorder_module_list = _reorder_module_list;
+        protocol_util = _protocol_util;
     }
 
 
@@ -66,12 +70,14 @@ public class ReorderRunner
         boolean to_return = false;
         for (IReorderModule reorder_module : reorder_module_list)
         {
-            reorder_module.init(of_switch,floodlight_reorder_module);
+            reorder_module.init(
+                protocol_util,of_switch,floodlight_reorder_module);
             boolean got_reordered = reorder_module.try_to_reorder();
             to_return = to_return || got_reordered;
 
             // clear previous table for next module to run.
-            Util.clear_flow_table(of_switch,floodlight_reorder_module);
+            protocol_util.clear_flow_table(
+                of_switch,floodlight_reorder_module);
         }
         return to_return;
     }
