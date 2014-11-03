@@ -26,10 +26,6 @@
       name="src_dir"
       location="${reorder_build_dir}/../src/"/>
 
-  <property
-      name="floodlight_modules_file"
-      location="${reorder_build_dir}/floodlight_modules/floodlight.modules"/>
-  
   
   <!-- Sets up initial directories -->
   <target name="init" description="setup build directories">
@@ -80,7 +76,6 @@
                           ${floodlight_one_three_jar}"/>
       </manifest>
       <fileset dir="${reorder_classes_dir}"/>
-      <fileset file="${floodlight_modules_file}"/>
       <zipgroupfileset dir="${floodlight_one_three_jar_dir}" includes="floodlight_one_three.jar" />
     </jar>
   </target>
