@@ -1,3 +1,0 @@
-[submodule "floodlight"]
-	path = floodlight
-	url = git@github.com:bmistree/floodlight.git
