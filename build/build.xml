@@ -17,6 +17,14 @@
       name="floodlight_one_three_jar"
       location="${floodlight_one_three_jar_dir}/floodlight_one_three.jar"/>
 
+  <property
+      name="floodlight_one_zero_jar_dir"
+      location="${reorder_build_dir}/../deps/"/>
+
+  <property
+      name="floodlight_one_zero_jar"
+      location="${floodlight_one_zero_jar_dir}/floodlight_one_zero.jar"/>
+  
   <!-- Where to store java class files -->
   <property
       name="reorder_classes_dir"
@@ -28,7 +36,9 @@
   <property
       name="src_dir_one_three"
       location="${reorder_build_dir}/../src/OneThree"/>
-  
+  <property
+      name="src_dir_one_zero"
+      location="${reorder_build_dir}/../src/OneZero"/>
 
   
   <!-- Sets up initial directories -->
@@ -52,7 +62,22 @@
   </target>
 
 
-  <!-- Run pronghorn connected to floodlight -->
+  <target name="compile_reorder_package_one_zero"
+          depends="init"
+          description="compile reorder package">
+    <!-- Compile all ralph java to bytecode -->
+    <javac
+        srcdir="${src_dir_reorder}:${src_dir_one_zero}"
+        destdir="${reorder_classes_dir}"
+        classpath="${floodlight_one_zero_jar}"
+        debug="true"
+        debuglevel="lines,vars,source"
+        includeantruntime="false" />
+  </target>
+
+  
+
+  <!-- Run pronghorn connected to floodlight OpenFlow 1.3 -->
   <property
       name="jar_one_three_reorder"
       value="one_three_reorder.jar"/>
@@ -66,7 +91,20 @@
     </antcall>
   </target>
 
-  
+  <!-- Run pronghorn connected to floodlight OpenFlow 1.0 -->
+  <property
+      name="jar_one_zero_reorder"
+      value="one_zero_reorder.jar"/>
+  <target
+      name="jar_one_zero_reorder"
+      depends="compile_reorder_package_one_zero"
+      description="Generate a jar for reorder testing.">
+    <antcall target="make_jar">
+      <param name="main_class" value="OneZero.Main"/>
+      <param name="dest_jar" value="${jar_one_zero_reorder}"/>
+    </antcall>
+  </target>
+
 
   <!-- Run pronghorn connected to floodlight -->
   <target
@@ -89,6 +127,7 @@
   <target name="clean" description="get rid of build dir">
     <delete dir="${reorder_classes_dir}"/>
     <delete file="${jar_one_three_reorder}"/>
+    <delete file="${jar_one_zero_reorder}"/>
   </target>
   
 </project>
