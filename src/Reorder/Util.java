@@ -13,4 +13,11 @@ public class Util
     {
         System.out.println(message);
     }
+
+    public static void log_info(ILoggable loggable, String msg)
+    {
+        System.out.println(
+            "[" + loggable.loggable_module_name() + "] " + msg);
+    }
+    
 }

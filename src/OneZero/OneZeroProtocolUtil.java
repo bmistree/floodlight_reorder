@@ -34,13 +34,20 @@ import Reorder.IProtocolUtil;
 import Reorder.Util;
 import Reorder.SynchronizedSwitch;
 import Reorder.FloodlightReorder;
+import Reorder.ILoggable;
 
-public enum OneZeroProtocolUtil implements IProtocolUtil
+public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
 {
     INSTANCE;
 
     private static final AtomicInteger xid_generator =
         new AtomicInteger(10);
+
+    @Override
+    public String loggable_module_name()
+    {
+        return "OneZeroProtocolUtil";
+    }
     
     public void clear_flow_table(
         IOFSwitch of_switch,FloodlightReorder floodlight_reorder)
@@ -110,12 +117,18 @@ public enum OneZeroProtocolUtil implements IProtocolUtil
         int to_return = -1;
         try
         {
+            Util.log_info(this,"Requesting number of entries");
             Future<List<OFStatistics>> future_stats_reply_list =
                 of_switch.queryStatistics(req);
             List<OFStatistics> stats_reply_list =
                 future_stats_reply_list.get();
 
             to_return = 0;
+
+            Util.log_info(
+                this,
+                "Received number of entries; rep size: " +
+                stats_reply_list.size());
             
             for (OFStatistics stats : stats_reply_list)
             {
