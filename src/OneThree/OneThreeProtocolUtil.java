@@ -131,21 +131,35 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
     @Override
     public OFFlowMod generate_add_eth_src_flow_mod(long src_ethernet_addr)
     {
-        return generate_flow_mod(src_ethernet_addr,true);
+        return generate_flow_mod(src_ethernet_addr,null,true);
     }
 
     @Override
     public OFFlowMod generate_rm_eth_src_flow_mod(long src_ethernet_addr)
     {
-        return generate_flow_mod(src_ethernet_addr,false);
+        return generate_flow_mod(src_ethernet_addr,null,false);
     }
 
+    @Override
+    public OFFlowMod generate_add_eth_src_and_tcp_src_port_flow_mod(
+        long src_ethernet_addr, int src_tcp_port)
+    {
+        return generate_flow_mod(src_ethernet_addr,src_tcp_port,false);
+    }
+
+    
     /**
+       @param src_ethernet_addr --- Can be null if we want to match
+       across all ethernet source addresses.
+
+       @param src_tcp_port --- Can be null if we want to match across
+       all tcp source ports.
+       
        @returns a flow mod that adds or removes an instruction to
        perform an action on a particular ethernet address.
      */
     protected OFFlowMod generate_flow_mod(
-        long src_ethernet_addr, boolean is_add)
+        Long src_ethernet_addr, Integer src_tcp_port, boolean is_add)
     {
         OFFlowMod to_return = new OFFlowMod();
         if (is_add)
@@ -154,7 +168,8 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
             to_return.setCommand(OFFlowMod.OFPFC_DELETE_STRICT);
         
         // generate match
-        OFMatch of_match = generate_ethernet_src_match(src_ethernet_addr);
+        OFMatch of_match =
+            generate_flowmod_match(src_ethernet_addr,src_tcp_port);
         to_return.setMatch(of_match);
         
         // add operations for insertions.  empty instruction list
@@ -162,12 +177,35 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
         to_return.setInstructions(new ArrayList<OFInstruction>());
         return to_return;
     }
-    
-    protected OFMatch generate_ethernet_src_match(long src_ethernet_addr)
+
+    /**
+       @param src_ethernet_addr --- Can be null if we want to match
+       across all ethernet source addresses.
+
+       @param src_tcp_port --- Can be null if we want to match across
+       all tcp source ports.
+    */
+    protected OFMatch generate_flowmod_match(
+        Long src_ethernet_addr, Integer src_tcp_port)
     {
-        MACAddress mac_addr = MACAddress.valueOf(src_ethernet_addr);
-        String ofmatch_comb_str = OFOXMFieldType.ETH_SRC.getName();
-        ofmatch_comb_str += "=" + mac_addr.toString();
+        String ofmatch_comb_str = "";
+
+        if (src_ethernet_addr != null)
+        {
+            MACAddress mac_addr = MACAddress.valueOf(src_ethernet_addr);
+            ofmatch_comb_str += OFOXMFieldType.ETH_SRC.getName();
+            ofmatch_comb_str += "=" + mac_addr.toString();
+        }
+
+        if (src_tcp_port != null)
+        {
+            if (src_ethernet_addr != null)
+                ofmatch_comb_str += ",";
+            
+            ofmatch_comb_str += OFOXMFieldType.TCP_SRC.getName();
+            ofmatch_comb_str += "=" + src_tcp_port.toString();
+        }
+        
         return OFMatch.fromString(ofmatch_comb_str);
     }
 }
