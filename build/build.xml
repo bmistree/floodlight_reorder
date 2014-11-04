@@ -88,6 +88,7 @@
     <antcall target="make_jar">
       <param name="main_class" value="OneThree.Main"/>
       <param name="dest_jar" value="${jar_one_three_reorder}"/>
+      <param name="to_include_floodlight_jar" value="floodlight_one_three.jar"/>
     </antcall>
   </target>
 
@@ -102,6 +103,7 @@
     <antcall target="make_jar">
       <param name="main_class" value="OneZero.Main"/>
       <param name="dest_jar" value="${jar_one_zero_reorder}"/>
+      <param name="to_include_floodlight_jar" value="floodlight_one_zero.jar"/>
     </antcall>
   </target>
 
@@ -118,7 +120,7 @@
                           ${floodlight_one_three_jar}"/>
       </manifest>
       <fileset dir="${reorder_classes_dir}"/>
-      <zipgroupfileset dir="${floodlight_one_three_jar_dir}" includes="floodlight_one_three.jar" />
+      <zipgroupfileset dir="${floodlight_one_three_jar_dir}" includes="${to_include_floodlight_jar}" />
     </jar>
   </target>
 
