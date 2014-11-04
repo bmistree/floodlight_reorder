@@ -11,6 +11,7 @@ public class SingleThreadAddRemoveModule implements IReorderModule
     public final static String REORDER_NAME = "SingleThreadAddRemove";
     //public final static int NUM_ADDS = 10000;
     public final static int NUM_ADDS = 500000;
+    //public final static int NUM_ADDS = 100;
 
     
     protected SynchronizedSwitch synced_switch = null;
@@ -24,7 +25,7 @@ public class SingleThreadAddRemoveModule implements IReorderModule
      */
     @Override
     public boolean try_to_reorder()
-    {        
+    {
         // apply lots of changes.
         for (OFFlowMod flow_mod : flowmod_list)
             synced_switch.write(flow_mod,null);
@@ -34,6 +35,7 @@ public class SingleThreadAddRemoveModule implements IReorderModule
         
         // if no reorderings, should not have any entries in switch.
         int num_entries = protocol_util.num_entries(synced_switch);
+
         if (num_entries != 0)
             return true;
         return false;

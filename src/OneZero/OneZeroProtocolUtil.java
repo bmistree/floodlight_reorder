@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.io.IOException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.util.MACAddress;
@@ -17,6 +19,9 @@ import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFPacketOut;
+
+import org.openflow.protocol.action.OFAction;
 
 import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFStatisticsReply;
@@ -33,6 +38,9 @@ import Reorder.FloodlightReorder;
 public enum OneZeroProtocolUtil implements IProtocolUtil
 {
     INSTANCE;
+
+    private static final AtomicInteger xid_generator =
+        new AtomicInteger(10);
     
     public void clear_flow_table(
         IOFSwitch of_switch,FloodlightReorder floodlight_reorder)
@@ -53,11 +61,13 @@ public enum OneZeroProtocolUtil implements IProtocolUtil
         flow_mod.setIdleTimeout((short)0);
 
         // this message is not a response to any packet in.
-        flow_mod.setBufferId(-1);
+        flow_mod.setBufferId(OFPacketOut.BUFFER_ID_NONE);
         
         // set output port: applies deletes to all output ports
         flow_mod.setOutPort(OFPort.OFPP_NONE);
 
+        flow_mod.setXid(xid_generator.getAndIncrement());
+        
         // set ofmatch
         OFMatch of_match = new OFMatch();
         of_match.fromString("");
@@ -169,11 +179,16 @@ public enum OneZeroProtocolUtil implements IProtocolUtil
         to_return.setIdleTimeout((short)0);
 
         // this message is not a response to any packet in.
-        to_return.setBufferId(-1);
+        to_return.setBufferId(OFPacketOut.BUFFER_ID_NONE);
+
+        to_return.setPriority((short)22);
+        to_return.setActions(new ArrayList<OFAction>());
         
         // set output port: applies deletes to all output ports
         to_return.setOutPort(OFPort.OFPP_NONE);
 
+        // set transaction id
+        to_return.setXid(xid_generator.getAndIncrement());
         return to_return;
     }
 
