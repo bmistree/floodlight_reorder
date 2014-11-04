@@ -61,7 +61,7 @@
         includeantruntime="false" />
   </target>
 
-
+  
   <target name="compile_reorder_package_one_zero"
           depends="init"
           description="compile reorder package">
@@ -75,6 +75,10 @@
         includeantruntime="false" />
   </target>
 
+
+  <target name="jarify_all"
+          depends="jar_one_three_reorder,jar_one_zero_reorder">
+  </target>
   
 
   <!-- Run pronghorn connected to floodlight OpenFlow 1.3 -->
