@@ -48,6 +48,21 @@ public enum OneZeroProtocolUtil implements IProtocolUtil
         OFFlowMod flow_mod = new OFFlowMod();
         flow_mod.setCommand(OFFlowMod.OFPFC_DELETE);
         
+        // entries will never disappear on their own from flow table.
+        flow_mod.setHardTimeout((short)0);
+        flow_mod.setIdleTimeout((short)0);
+
+        // this message is not a response to any packet in.
+        flow_mod.setBufferId(-1);
+        
+        // set output port: applies deletes to all output ports
+        flow_mod.setOutPort(OFPort.OFPP_NONE);
+
+        // set ofmatch
+        OFMatch of_match = new OFMatch();
+        of_match.fromString("");
+        flow_mod.setMatch(of_match);
+        
         // actually clear it.
         synced_switch.write(flow_mod,null);
 
