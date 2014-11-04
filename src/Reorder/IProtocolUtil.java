@@ -16,6 +16,6 @@ public interface IProtocolUtil
     public int num_entries(SynchronizedSwitch synced_switch);
     public void issue_barrier_and_wait(
         SynchronizedSwitch synced_switch,FloodlightReorder floodlight_reorder);
-    public OFFlowMod generate_add_flow_mod(long src_ethernet_addr);
-    public OFFlowMod generate_rm_flow_mod(long src_ethernet_addr);
+    public OFFlowMod generate_add_eth_src_flow_mod(long src_ethernet_addr);
+    public OFFlowMod generate_rm_eth_src_flow_mod(long src_ethernet_addr);
 }

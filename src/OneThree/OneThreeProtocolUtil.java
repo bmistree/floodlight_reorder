@@ -36,14 +36,16 @@ import Reorder.FloodlightReorder;
 public enum OneThreeProtocolUtil implements IProtocolUtil
 {
     INSTANCE;
-    
+
+    @Override
     public void clear_flow_table(
         IOFSwitch of_switch,FloodlightReorder floodlight_reorder)
     {
         SynchronizedSwitch synced_switch = new SynchronizedSwitch(of_switch);
         clear_flow_table(synced_switch,floodlight_reorder);
     }
-
+    
+    @Override
     public void clear_flow_table(
         SynchronizedSwitch synced_switch, FloodlightReorder floodlight_reorder)
     {
@@ -57,12 +59,14 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
         // wait until has been cleared.
         issue_barrier_and_wait(synced_switch,floodlight_reorder);
     }
-
+    
+    @Override
     public int num_entries(SynchronizedSwitch synced_switch)
     {
         return num_entries(synced_switch.of_switch);
     }
     
+    @Override
     public int num_entries(IOFSwitch of_switch)
     {
         OFStatisticsRequest req = new OFStatisticsRequest();
@@ -113,7 +117,7 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
         return to_return;
     }
 
-    
+    @Override
     public void issue_barrier_and_wait(
         SynchronizedSwitch synced_switch,FloodlightReorder floodlight_reorder)
     {
@@ -123,13 +127,15 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
         synced_switch.write(barrier_request,null);
         floodlight_reorder.floodlight_mvar.barrier_finished.blocking_get();
     }
-    
-    public OFFlowMod generate_add_flow_mod(long src_ethernet_addr)
+
+    @Override
+    public OFFlowMod generate_add_eth_src_flow_mod(long src_ethernet_addr)
     {
         return generate_flow_mod(src_ethernet_addr,true);
     }
 
-    public OFFlowMod generate_rm_flow_mod(long src_ethernet_addr)
+    @Override
+    public OFFlowMod generate_rm_eth_src_flow_mod(long src_ethernet_addr)
     {
         return generate_flow_mod(src_ethernet_addr,false);
     }

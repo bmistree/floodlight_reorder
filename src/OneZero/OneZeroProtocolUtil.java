@@ -48,7 +48,8 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
     {
         return "OneZeroProtocolUtil";
     }
-    
+
+    @Override
     public void clear_flow_table(
         IOFSwitch of_switch,FloodlightReorder floodlight_reorder)
     {
@@ -56,6 +57,7 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
         clear_flow_table(synced_switch,floodlight_reorder);
     }
 
+    @Override
     public void clear_flow_table(
         SynchronizedSwitch synced_switch, FloodlightReorder floodlight_reorder)
     {
@@ -86,12 +88,14 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
         // wait until has been cleared.
         issue_barrier_and_wait(synced_switch,floodlight_reorder);
     }
-
+    
+    @Override
     public int num_entries(SynchronizedSwitch synced_switch)
     {
         return num_entries(synced_switch.of_switch);
     }
     
+    @Override
     public int num_entries(IOFSwitch of_switch)
     {
         OFStatisticsRequest req = new OFStatisticsRequest();
@@ -155,7 +159,7 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
         return to_return;
     }
 
-    
+    @Override
     public void issue_barrier_and_wait(
         SynchronizedSwitch synced_switch,FloodlightReorder floodlight_reorder)
     {
@@ -166,12 +170,14 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
         floodlight_reorder.floodlight_mvar.barrier_finished.blocking_get();
     }
     
-    public OFFlowMod generate_add_flow_mod(long src_ethernet_addr)
+    @Override
+    public OFFlowMod generate_add_eth_src_flow_mod(long src_ethernet_addr)
     {
         return generate_flow_mod(src_ethernet_addr,true);
     }
-
-    public OFFlowMod generate_rm_flow_mod(long src_ethernet_addr)
+    
+    @Override
+    public OFFlowMod generate_rm_eth_src_flow_mod(long src_ethernet_addr)
     {
         return generate_flow_mod(src_ethernet_addr,false);
     }
