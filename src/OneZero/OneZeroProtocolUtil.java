@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.util.MACAddress;
+import net.floodlightcontroller.core.IFloodlightProviderService;
 
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
@@ -147,14 +148,26 @@ public enum OneZeroProtocolUtil implements IProtocolUtil
         // generate match
         OFMatch of_match = generate_ethernet_src_match(src_ethernet_addr);
         to_return.setMatch(of_match);
+
+        // entries will never disappear on their own from flow table.
+        to_return.setHardTimeout((short)0);
+        to_return.setIdleTimeout((short)0);
+
+        // this message is not a response to any packet in.
+        to_return.setBufferId(-1);
+        
+        // set output port: applies deletes to all output ports
+        to_return.setOutPort(OFPort.OFPP_NONE);
+
         return to_return;
     }
-    
+
     protected OFMatch generate_ethernet_src_match(long src_ethernet_addr)
     {
         MACAddress mac_addr = MACAddress.valueOf(src_ethernet_addr);
-        OFMatch to_return = new OFMatch();
-        to_return.setDataLayerDestination(mac_addr.toString());
-        return to_return;
+
+        OFMatch match = new OFMatch();
+        match.fromString(OFMatch.STR_DL_SRC + "=" + mac_addr.toString());
+        return match;
     }
 }
