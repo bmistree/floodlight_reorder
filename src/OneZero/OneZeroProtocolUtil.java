@@ -95,9 +95,15 @@ public enum OneZeroProtocolUtil implements IProtocolUtil
             new OFAggregateStatisticsRequest();
         OFMatch match = new OFMatch();
         specificReq.setMatch(match);
+
+        // match all tables
+        specificReq.setTableId((byte)0xff);
+        // do not filter on ports
+        specificReq.setOutPort(OFPort.OFPP_NONE.getValue());
+        
         req.setStatistics(
             Collections.singletonList((OFStatistics)specificReq));
-
+        
         requestLength += specificReq.getLength();
         req.setLengthU(requestLength);
 

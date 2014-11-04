@@ -35,7 +35,6 @@ public class SingleThreadAddRemoveModule implements IReorderModule
         
         // if no reorderings, should not have any entries in switch.
         int num_entries = protocol_util.num_entries(synced_switch);
-
         if (num_entries != 0)
             return true;
         return false;
