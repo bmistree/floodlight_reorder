@@ -19,6 +19,6 @@ public interface IProtocolUtil
     public OFFlowMod generate_add_eth_src_flow_mod(long src_ethernet_addr);
     public OFFlowMod generate_add_eth_src_and_tcp_src_port_flow_mod(
         long src_ethernet_addr, int src_tcp_port);
-    
+    public OFFlowMod generate_rm_tcp_src_port_flow_mod(int src_tcp_port);
     public OFFlowMod generate_rm_eth_src_flow_mod(long src_ethernet_addr);
 }

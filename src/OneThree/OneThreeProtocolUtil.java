@@ -144,9 +144,16 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
     public OFFlowMod generate_add_eth_src_and_tcp_src_port_flow_mod(
         long src_ethernet_addr, int src_tcp_port)
     {
-        return generate_flow_mod(src_ethernet_addr,src_tcp_port,false);
+        return generate_flow_mod(src_ethernet_addr,src_tcp_port,true);
     }
 
+    @Override
+    public OFFlowMod generate_rm_tcp_src_port_flow_mod(int src_tcp_port)
+    {
+        return generate_flow_mod(null,src_tcp_port,false);
+    }
+        
+    
     
     /**
        @param src_ethernet_addr --- Can be null if we want to match
