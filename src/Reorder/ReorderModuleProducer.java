@@ -36,7 +36,7 @@ public enum ReorderModuleProducer
             int index = arg.indexOf(MODULE_ARG);
             if (index != -1)
             {
-                String substring = arg.substring(index);
+                String substring = arg.substring(index + MODULE_ARG.length());
                 String[] module_list=substring.trim().split(",");
 
                 for(int i = 0; i < module_list.length; ++i)
