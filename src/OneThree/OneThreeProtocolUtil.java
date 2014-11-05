@@ -208,11 +208,17 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
         {
             if (src_ethernet_addr != null)
                 ofmatch_comb_str += ",";
+
+            ofmatch_comb_str += OFOXMFieldType.ETH_TYPE.getName();
+            ofmatch_comb_str += "=0x0800,";
+
+            ofmatch_comb_str += OFOXMFieldType.IP_PROTO.getName();
+            ofmatch_comb_str += "=6,";
             
             ofmatch_comb_str += OFOXMFieldType.TCP_SRC.getName();
             ofmatch_comb_str += "=" + src_tcp_port.toString();
         }
-        
+
         return OFMatch.fromString(ofmatch_comb_str);
     }
 }
