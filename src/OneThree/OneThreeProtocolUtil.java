@@ -172,7 +172,7 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
         if (is_add)
             to_return.setCommand(OFFlowMod.OFPFC_ADD);
         else
-            to_return.setCommand(OFFlowMod.OFPFC_DELETE_STRICT);
+            to_return.setCommand(OFFlowMod.OFPFC_DELETE);
         
         // generate match
         OFMatch of_match =
