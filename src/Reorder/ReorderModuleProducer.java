@@ -19,6 +19,9 @@ public enum ReorderModuleProducer
     ReorderModuleProducer()
     {
         add_reorder_module(
+            LoadTableAndPrintModule.REORDER_NAME,
+            LoadTableAndPrintModule.Factory.INSTANCE);
+        add_reorder_module(
             SingleThreadAddRemoveModule.REORDER_NAME,
             SingleThreadAddRemoveModule.Factory.INSTANCE);
         add_reorder_module(
