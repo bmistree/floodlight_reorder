@@ -21,8 +21,10 @@ public enum ReorderModuleProducer
         add_reorder_module(
             SingleThreadAddRemoveModule.REORDER_NAME,
             SingleThreadAddRemoveModule.Factory.INSTANCE);
+        add_reorder_module(
+            EtherTCPAddRemoveModule.REORDER_NAME,
+            EtherTCPAddRemoveModule.Factory.INSTANCE);
     }
-
     
     public List<IReorderModule> parse_reorder_args(
         String[] args)
