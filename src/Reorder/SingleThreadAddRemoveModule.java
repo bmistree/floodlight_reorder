@@ -64,6 +64,7 @@ public class SingleThreadAddRemoveModule implements IReorderModule, ILoggable
         {
             // flow mod add,
             flowmod_list.add(protocol_util.generate_add_eth_src_flow_mod(i));
+
             // flow mod remove
             flowmod_list.add(protocol_util.generate_rm_eth_src_flow_mod(i));
         }

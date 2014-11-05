@@ -21,4 +21,7 @@ public interface IProtocolUtil
         long src_ethernet_addr, int src_tcp_port);
     public OFFlowMod generate_rm_tcp_src_port_flow_mod(int src_tcp_port);
     public OFFlowMod generate_rm_eth_src_flow_mod(long src_ethernet_addr);
+
+    public void print_all_entries(SynchronizedSwitch synced_switch);
+    public void print_all_entries(IOFSwitch of_switch);
 }

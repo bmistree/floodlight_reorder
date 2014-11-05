@@ -27,7 +27,7 @@ import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFStatisticsReply;
 import org.openflow.protocol.statistics.OFStatistics;
 import org.openflow.protocol.statistics.OFStatisticsType;
-import org.openflow.protocol.statistics.OFAggregateStatisticsReply;
+import org.openflow.protocol.statistics.OFFlowStatisticsReply;
 import org.openflow.protocol.statistics.OFAggregateStatisticsRequest;
 
 import Reorder.IProtocolUtil;
@@ -94,12 +94,29 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
     {
         return num_entries(synced_switch.of_switch);
     }
-    
+
     @Override
     public int num_entries(IOFSwitch of_switch)
     {
+        return num_entries(of_switch,false);
+    }
+
+    @Override
+    public void print_all_entries(SynchronizedSwitch synced_switch)
+    {
+        print_all_entries(synced_switch.of_switch);
+    }
+    
+    @Override
+    public void print_all_entries(IOFSwitch of_switch)
+    {
+        num_entries(of_switch, true);
+    }
+    
+    protected int num_entries(IOFSwitch of_switch, boolean print_flow_table)
+    {
         OFStatisticsRequest req = new OFStatisticsRequest();
-        req.setStatisticType(OFStatisticsType.AGGREGATE);
+        req.setStatisticType(OFStatisticsType.FLOW);
         int requestLength = req.getLengthU();
         
         OFAggregateStatisticsRequest specificReq =
@@ -127,18 +144,17 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
             List<OFStatistics> stats_reply_list =
                 future_stats_reply_list.get();
 
-            to_return = 0;
+            to_return = stats_reply_list.size();
 
-            Util.log_info(
-                this,
-                "Received number of entries; rep size: " +
-                stats_reply_list.size());
-            
-            for (OFStatistics stats : stats_reply_list)
+
+            if (print_flow_table)
             {
-                OFAggregateStatisticsReply reply =
-                    (OFAggregateStatisticsReply) stats;
-                to_return += reply.getFlowCount();
+                for (OFStatistics stats : stats_reply_list)
+                {
+                    OFFlowStatisticsReply reply =
+                        (OFFlowStatisticsReply) stats;
+                    System.out.println(reply.toString());
+                }
             }
         }
         catch(IOException ex)
