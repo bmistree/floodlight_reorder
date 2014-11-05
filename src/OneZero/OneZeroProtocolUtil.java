@@ -256,11 +256,17 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
             ofmatch_comb_str += OFMatch.STR_DL_SRC;
             ofmatch_comb_str += "=" + mac_addr.toString();
         }
-
+        
         if (src_tcp_port != null)
         {
             if (src_ethernet_addr != null)
                 ofmatch_comb_str += ",";
+
+            ofmatch_comb_str += OFMatch.STR_DL_TYPE;
+            ofmatch_comb_str += "=0x0800,";
+
+            ofmatch_comb_str += OFMatch.STR_NW_PROTO;
+            ofmatch_comb_str += "=6,";
             
             ofmatch_comb_str += OFMatch.STR_TP_SRC;
             ofmatch_comb_str += "=" + src_tcp_port.toString();
