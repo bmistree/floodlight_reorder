@@ -48,28 +48,31 @@ def print_sorted(dump_filename):
         file_text = fd.read()
 
     all_entries = []
-    #regex = 'duration=(?P<duration>\\d+.\\d+)s.*?tp_src=(?P<tcp_port>\\d+)'
-    regex = '(?:(duration=(?P<duration>\\d+.\\d+))?)'
-    regex += 's.*?'
-    regex += '(?:(durationSeconds=(?P<duration_seconds>\\d+))?)'
-    regex += 's.*?'
-    regex += '(?:(durationNanoseconds=(?P<duration_ns>\\d+))?)'
-    regex += 's.*?'
-    regex += 'tp_src=(?P<tcp_port>\\d+)'
-    
-    for match in re.finditer(regex,file_text):
+    one_zero_regex = (
+        'duration=(?P<duration>\\d+.\\d+)s.*?tp_src=(?P<tcp_port>\\d+)')
+    one_three_regex = (
+        'tp_src=(?P<tcp_port>\\d+)' +
+        '.*?' +
+        'durationSeconds=(?P<duration_seconds>\\d+)'
+        '.*?' +
+        'durationNanoseconds=(?P<duration_ns>\\d+)')
+
+    for match in re.finditer(one_zero_regex,file_text):
         duration_str = match.group('duration')
-        if duration_str is None:
-            duration_seconds_str = match.group('duration_seconds')
-            duration_ns_str = match.group('duration_ns')
-            duration_seconds = float (duration_seconds_str)
-            duration_ns = float(duration_ns_str)
-            duration = duration_seconds + (duration_ns / (1e9))
-        else:
-            duration = float(duration_str)
-            
+        tcp_port_str = match.group('tcp_port')
+        duration = float(duration_str)
+        all_entries.append(Entry(duration,int(tcp_port_str)))
+
+    for match in re.finditer(one_three_regex,file_text):
+        duration_seconds_str = match.group('duration_seconds')
+        duration_ns_str = match.group('duration_ns')
+        duration_seconds = float (duration_seconds_str)
+        duration_ns = float(duration_ns_str)
+        duration = duration_seconds + (duration_ns / (1e9))
+
         tcp_port_str = match.group('tcp_port')
         all_entries.append(Entry(duration,int(tcp_port_str)))
+
 
     # all_entries.sort(
     #     key= lambda val: val.duration)
