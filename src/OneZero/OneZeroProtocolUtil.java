@@ -254,6 +254,79 @@ public enum OneZeroProtocolUtil implements IProtocolUtil, ILoggable
         return to_return;
     }
 
+    @Override
+    public OFFlowMod generate_full_flow_mod(long some_num)
+    {
+        OFFlowMod to_return = new OFFlowMod();
+        // generate match
+        OFMatch of_match =
+            generate_full_flowmod_match(some_num);
+        to_return.setMatch(of_match);
+
+        // entries will never disappear on their own from flow table.
+        to_return.setHardTimeout((short)0);
+        to_return.setIdleTimeout((short)0);
+
+        // this message is not a response to any packet in.
+        to_return.setBufferId(OFPacketOut.BUFFER_ID_NONE);
+
+        to_return.setPriority((short)22);
+        to_return.setActions(new ArrayList<OFAction>());
+        
+        // set output port: applies deletes to all output ports
+        to_return.setOutPort(OFPort.OFPP_NONE);
+
+        // set transaction id
+        to_return.setXid(xid_generator.getAndIncrement());
+        return to_return;
+    }
+    
+    protected OFMatch generate_full_flowmod_match(Long some_num)
+    {
+        String ofmatch_comb_str = "";
+        ofmatch_comb_str += OFMatch.STR_IN_PORT;
+        ofmatch_comb_str += "=2,";
+        
+        MACAddress mac_addr = MACAddress.valueOf(some_num);
+        ofmatch_comb_str += OFMatch.STR_DL_DST;
+        ofmatch_comb_str += "=" + mac_addr.toString() + ",";
+        
+        ofmatch_comb_str += OFMatch.STR_DL_SRC;
+        ofmatch_comb_str += "=" + mac_addr.toString() + ",";
+
+        ofmatch_comb_str += OFMatch.STR_DL_TYPE;
+        ofmatch_comb_str += "=0x0800,";
+
+
+        ofmatch_comb_str += OFMatch.STR_DL_VLAN;
+        ofmatch_comb_str += "=0x0800,";
+
+        ofmatch_comb_str += OFMatch.STR_DL_VLAN_PCP;
+        ofmatch_comb_str += "=4,";
+        
+        ofmatch_comb_str += OFMatch.STR_NW_PROTO;
+        ofmatch_comb_str += "=6,";
+        
+        ofmatch_comb_str += OFMatch.STR_NW_DST;
+        ofmatch_comb_str += "=48.48.48.48,";
+
+        ofmatch_comb_str += OFMatch.STR_NW_SRC;
+        ofmatch_comb_str += "=48.48.48.48,";
+        
+        ofmatch_comb_str += OFMatch.STR_NW_TOS;
+        ofmatch_comb_str += "=4,";
+        
+        ofmatch_comb_str += OFMatch.STR_TP_DST;
+        ofmatch_comb_str += "=" + some_num.toString() + ",";
+        
+        ofmatch_comb_str += OFMatch.STR_TP_SRC;
+        ofmatch_comb_str += "=" + some_num.toString();
+        
+        OFMatch match = new OFMatch();
+        match.fromString(ofmatch_comb_str);
+        return match;
+    }
+    
     /**
        @param src_ethernet_addr --- Can be null if we want to match
        across all ethernet source addresses.

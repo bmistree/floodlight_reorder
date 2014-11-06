@@ -172,7 +172,13 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
     {
         return generate_flow_mod(null,src_tcp_port,false);
     }
-        
+
+    @Override
+    public OFFlowMod generate_full_flow_mod(long some_num)
+    {
+        Util.force_assert("FIXME: must finish writing generate_full_flow_mod");
+    }
+    
     
     
     /**

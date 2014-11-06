@@ -9,7 +9,11 @@ import org.openflow.protocol.OFFlowMod;
 public class LoadTableAndPrintModule implements IReorderModule, ILoggable
 {
     public final static String REORDER_NAME = "LoadTableAndPrint";
-    public final static int NUM_ADDS = 500;
+    //public final static int NUM_ADDS = 500;
+    //public final static int NUM_ADDS = 150;
+    //public final static int NUM_ADDS = 1500;
+    //public final static int NUM_ADDS = 2500;
+    public final static int NUM_ADDS = 3500;
 
     
     protected SynchronizedSwitch synced_switch = null;
@@ -66,7 +70,10 @@ public class LoadTableAndPrintModule implements IReorderModule, ILoggable
         for (int i =0; i < NUM_ADDS; ++i)
         {
             // flow mod add,
-            flowmod_list.add(protocol_util.generate_add_eth_src_flow_mod(i));
+            //flowmod_list.add(protocol_util.generate_add_eth_src_flow_mod(i));
+
+            OFFlowMod to_add = protocol_util.generate_full_flow_mod(i);
+            flowmod_list.add(to_add);
         }
     }
 
