@@ -13,7 +13,8 @@ public class LoadTableAndPrintModule implements IReorderModule, ILoggable
     //public final static int NUM_ADDS = 150;
     //public final static int NUM_ADDS = 1500;
     //public final static int NUM_ADDS = 2500;
-    public final static int NUM_ADDS = 3500;
+    //public final static int NUM_ADDS = 3500;
+    public final static int NUM_ADDS = 5000;
 
     
     protected SynchronizedSwitch synced_switch = null;

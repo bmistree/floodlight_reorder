@@ -177,6 +177,7 @@ public enum OneThreeProtocolUtil implements IProtocolUtil
     public OFFlowMod generate_full_flow_mod(long some_num)
     {
         Util.force_assert("FIXME: must finish writing generate_full_flow_mod");
+        return null;
     }
     
     
