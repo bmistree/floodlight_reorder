@@ -8,7 +8,7 @@ REORDER_BIN=reorder
 # algorithm works in such a way that when linking static files, will
 # only take symbols from library that currently need.  Putting cjson
 # at the end ensures that anything that needs it will use it.
-LINKED_LIBS=$(LIB_DIR)/SocketManager.a $(LIB_DIR)/AIM.a $(LIB_DIR)/loci.a $(LIB_DIR)/OS.a $(LIB_DIR)/BigHash.a $(LIB_DIR)/Configuration.a $(LIB_DIR)/locitest.a $(LIB_DIR)/BigList.a $(LIB_DIR)/debug_counter.a $(LIB_DIR)/minimatch.a $(LIB_DIR)/timer_wheel.a $(LIB_DIR)/BigRing.a $(LIB_DIR)/indigo.a $(LIB_DIR)/OFConnectionManager.a $(LIB_DIR)/cjson.a
+LINKED_LIBS=$(LIB_DIR)/SocketManager.a $(LIB_DIR)/AIM.a $(LIB_DIR)/loci.a $(LIB_DIR)/OS.a $(LIB_DIR)/BigHash.a $(LIB_DIR)/Configuration.a $(LIB_DIR)/locitest.a $(LIB_DIR)/BigList.a $(LIB_DIR)/debug_counter.a $(LIB_DIR)/minimatch.a $(LIB_DIR)/timer_wheel.a $(LIB_DIR)/BigRing.a $(LIB_DIR)/indigo.a $(LIB_DIR)/OFConnectionManager.a $(LIB_DIR)/cjson.a $(LIB_DIR)/OFStateManager.a $(LIB_DIR)/BigList.a $(LIB_DIR)/OFConnectionManager.a $(LIB_DIR)/debug_counter.a $(LIB_DIR)/minimatch.a $(LIB_DIR)/BigRing.a $(LIB_DIR)/BigHash.a $(LIB_DIR)/loci.a $(LIB_DIR)/OS.a $(LIB_DIR)/indigo.a -lm -lpthread
 
 
 INC_FLAGS=-I$(INDIGO_DIR)/modules/OFStateManager/module/inc/ 
@@ -45,7 +45,7 @@ GLOBAL_CFLAGS += -DOFCONNECTIONMANAGER_CONFIG_INCLUDE_UCLI=0
 
 GLOBAL_CFLAGS += -DSOCKETMANAGER_CONFIG_TIMESLICE_MS=1
 
-DEPENDMODULES += AIM BigList SocketManager loci locitest indigo murmur cjson Configuration OFConnectionManager BigHash debug_counter timer_wheel minimatch BigRing OS
+DEPENDMODULES += AIM BigList SocketManager loci locitest indigo murmur cjson Configuration OFConnectionManager BigHash debug_counter timer_wheel minimatch BigRing OFStateManager OS
 
 GLOBAL_LINK_LIBS += -lm
 
@@ -64,7 +64,7 @@ include $(BUILDER)/dependmodules.mk
 include $(BUILDER)/targets.mk
 
 all:
-	$(CC) $(LIB_FLAGS) $(INC_FLAGS) main.c $(LINKED_LIBS) -lm -o $(REORDER_BIN)
+	$(CC) $(LIB_FLAGS) $(INC_FLAGS) main.c $(LINKED_LIBS) -o $(REORDER_BIN)
 
 clean:
 	rm -f dependmodules.x
