@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <indigo/time.h>
 #include <OFStateManager/ofstatemanager.h>
 #include <OFStateManager/ofstatemanager_config.h>
 #include <SocketManager/socketmanager_config.h>
@@ -9,14 +10,66 @@
 #include <indigo/of_state_manager.h>
 #include <indigo/port_manager.h>
 #include <semaphore.h>
+#include "ofstatemanager_decs.h"
 
-#define RETURN_INT_GOT_REORDERING 1
-#define RETURN_INT_NO_REORDERING 0
-
-typedef enum{REORDERING, NO_REORDERING} ReorderingReturnType;
+typedef enum{REORDERING, NO_REORDERING, REORDERING_ERROR} ReorderingReturnType;
 
 ReorderingReturnType test_reordering(void);
 void handle_message(of_object_t *obj);
+
+
+static indigo_error_t
+op_entry_create(void *table_priv, indigo_cxn_id_t cxn_id,
+                of_flow_add_t *obj, indigo_cookie_t flow_id, void **entry_priv)
+{
+    //AIM_LOG_VERBOSE("flow create called");
+    *entry_priv = NULL;
+    return INDIGO_ERROR_NONE;
+}
+
+static indigo_error_t
+op_entry_modify(void *table_priv, indigo_cxn_id_t cxn_id,
+                void *entry_priv, of_flow_modify_t *obj)
+{
+    //AIM_LOG_VERBOSE("flow modify called");
+    return INDIGO_ERROR_NONE;
+}
+
+static indigo_error_t
+op_entry_delete(void *table_priv, indigo_cxn_id_t cxn_id,
+                void *entry_priv, indigo_fi_flow_stats_t *flow_stats)
+{
+    //AIM_LOG_VERBOSE("flow delete called");
+    memset(flow_stats, 0, sizeof(*flow_stats));
+    return INDIGO_ERROR_NONE;
+}
+
+static indigo_error_t
+op_entry_stats_get(void *table_priv, indigo_cxn_id_t cxn_id,
+                   void *entry_priv, indigo_fi_flow_stats_t *flow_stats)
+{
+    //AIM_LOG_VERBOSE("flow stats get called");
+    memset(flow_stats, 0, sizeof(*flow_stats));
+    return INDIGO_ERROR_NONE;
+}
+
+static indigo_error_t
+op_entry_hit_status_get(void *table_priv, indigo_cxn_id_t cxn_id,
+                        void *entry_priv, bool *hit_status)
+{
+    //AIM_LOG_VERBOSE("flow hit status get called");
+    *hit_status = false;
+    return INDIGO_ERROR_NONE;
+}
+
+
+static indigo_core_table_ops_t test_ops = {
+    op_entry_create,
+    op_entry_modify,
+    op_entry_delete,
+    op_entry_stats_get,
+    op_entry_hit_status_get,
+};
 
 
 int main (int argc, char** argv)
@@ -25,12 +78,41 @@ int main (int argc, char** argv)
     ind_soc_config_t soc_cfg = { 0 };
     ind_soc_init(&soc_cfg);
     ind_soc_enable_set(1);
+
+    /* Init Core */
+    MEMSET(&core, 0, sizeof(core));
+    core.stats_check_ms = 1000;
+
+    if (ind_core_init(&core) != INDIGO_ERROR_NONE)
+    {
+        printf("Error in initing core");
+        assert(false);
+    }
+    if (ind_core_enable_set(1) != INDIGO_ERROR_NONE)
+    {
+        printf("Error enabling core");
+        assert(false);
+    }
+
+    indigo_core_table_register(0, "test", &test_ops, NULL);
+    
+    
     
     printf("\n\nHello, World!\n\n");
     return 0;
 }
 
 
+
+void do_barrier()
+{
+    // FIXME: not a real barrier.  Just wait a while to force buffered
+    // commands to run.
+    int idx;
+    
+    for (idx = 0; idx < 1000; ++idx)
+        ind_soc_select_and_run(0);
+}
 
 ReorderingReturnType test_reordering(void)
 {
@@ -41,7 +123,22 @@ ReorderingReturnType test_reordering(void)
     of_match_t match;
     uint16_t priority;
 
-    return NO_REORDERING;
+
+    // issue barrier so that all commands finish
+    printf("\nExecuting barrier\n");
+    do_barrier();
+
+    if (ind_core_ft->current_count == 0)
+        return REORDERING;
+    else if (ind_core_ft->current_count == 1)
+        return NO_REORDERING;
+
+    printf(
+        "\nUnexpected number of flow table entries: %i\n",
+        ind_core_ft->current_count);
+    
+    assert(false);
+    return REORDERING_ERROR;
 }
 
 void handle_message(of_object_t *obj)

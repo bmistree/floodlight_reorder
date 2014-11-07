@@ -11,7 +11,13 @@ REORDER_BIN=reorder
 LINKED_LIBS=$(LIB_DIR)/SocketManager.a $(LIB_DIR)/AIM.a $(LIB_DIR)/loci.a $(LIB_DIR)/OS.a $(LIB_DIR)/BigHash.a $(LIB_DIR)/Configuration.a $(LIB_DIR)/locitest.a $(LIB_DIR)/BigList.a $(LIB_DIR)/debug_counter.a $(LIB_DIR)/minimatch.a $(LIB_DIR)/timer_wheel.a $(LIB_DIR)/BigRing.a $(LIB_DIR)/indigo.a $(LIB_DIR)/OFConnectionManager.a $(LIB_DIR)/cjson.a $(LIB_DIR)/OFStateManager.a $(LIB_DIR)/BigList.a $(LIB_DIR)/OFConnectionManager.a $(LIB_DIR)/debug_counter.a $(LIB_DIR)/minimatch.a $(LIB_DIR)/BigRing.a $(LIB_DIR)/BigHash.a $(LIB_DIR)/loci.a $(LIB_DIR)/OS.a $(LIB_DIR)/indigo.a -lm -lpthread
 
 
-INC_FLAGS=-I$(INDIGO_DIR)/modules/OFStateManager/module/inc/ 
+INC_FLAGS=-I$(INDIGO_DIR)/modules/OFStateManager/module/inc/
+# to read ofstatemanager_decs.h
+INC_FLAGS += -I$(INDIGO_DIR)/modules/OFStateManager/module/src/
+INC_FLAGS += -I$(INDIGO_DIR)/submodules/bigcode/modules/BigData/BigList/module/inc/
+INC_FLAGS += -I$(INDIGO_DIR)/submodules/bigcode/modules/debug_counter/module/inc/
+INC_FLAGS += -I$(INDIGO_DIR)/submodules/bigcode/modules/BigData/BigHash/module/inc/
+INC_FLAGS += -I$(INDIGO_DIR)/modules/minimatch/module/inc/
 INC_FLAGS += -I$(INDIGO_DIR)/submodules/infra/modules/AIM/module/inc/
 INC_FLAGS += -I$(INDIGO_DIR)/modules/indigo/module/inc/
 INC_FLAGS += -I$(INDIGO_DIR)/submodules/loxigen-artifacts/loci/inc/
@@ -19,6 +25,7 @@ INC_FLAGS += -I$(INDIGO_DIR)/modules/SocketManager/module/inc/
 INC_FLAGS += -I$(INDIGO_DIR)/modules/Configuration/module/inc/
 INC_FLAGS += -I$(INDIGO_DIR)/submodules/bigcode/modules/cjson/module/inc/
 INC_FLAGS += -I$(INDIGO_DIR)/submodules/bigcode/modules/cjson_util/module/inc/
+
 
 
 include $(INDIGO_DIR)/init.mk
@@ -64,7 +71,7 @@ include $(BUILDER)/dependmodules.mk
 include $(BUILDER)/targets.mk
 
 all:
-	$(CC) $(LIB_FLAGS) $(INC_FLAGS) main.c $(LINKED_LIBS) -o $(REORDER_BIN)
+	$(CC) $(LIB_FLAGS) $(INC_FLAGS) $(GLOBAL_CFLAGS) main.c $(LINKED_LIBS) -o $(REORDER_BIN)
 
 clean:
 	rm -f dependmodules.x
