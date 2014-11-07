@@ -3,7 +3,7 @@
 #include <OFStateManager/ofstatemanager_config.h>
 #include <SocketManager/socketmanager_config.h>
 #include <SocketManager/socketmanager.h>
-
+#include <cjson/cJSON.h>
 
 int main (int argc, char** argv)
 {
