@@ -19,46 +19,12 @@ ReorderingReturnType test_reordering(void);
 void handle_message(of_object_t *obj);
 
 
-indigo_error_t
-indigo_port_modify(of_port_mod_t *port_mod);
-indigo_error_t
-indigo_port_stats_get(of_port_stats_request_t *request,
-    of_port_stats_reply_t **reply_ptr);
-
-indigo_error_t
-indigo_port_queue_config_get(of_queue_get_config_request_t *request,
-    of_queue_get_config_reply_t **reply_ptr);
-indigo_error_t
-indigo_port_queue_stats_get(of_queue_stats_request_t *request,
-    of_queue_stats_reply_t **reply_ptr);
-indigo_error_t
-indigo_port_experimenter(of_experimenter_t *experimenter,
-    indigo_cxn_id_t cxn_id);
-indigo_error_t
-indigo_fwd_experimenter(of_experimenter_t *experimenter,
-    indigo_cxn_id_t cxn_id);
-indigo_error_t
-indigo_port_interface_list(indigo_port_info_t **list);
-void
-indigo_port_interface_list_destroy(indigo_port_info_t *list);
-indigo_error_t indigo_port_desc_stats_get(
-    of_port_desc_stats_reply_t *port_desc_stats_reply);
-void
-indigo_fwd_pipeline_get(of_desc_str_t pipeline);
-indigo_error_t
-indigo_fwd_pipeline_set(of_desc_str_t pipeline);
-
-void
-indigo_fwd_pipeline_stats_get(of_desc_str_t **pipeline, int *num_pipelines);
-
-
 int main (int argc, char** argv)
 {
     ind_core_config_t core;
     ind_soc_config_t soc_cfg = { 0 };
     ind_soc_init(&soc_cfg);
-    
-    /* ind_soc_enable_set(1); */
+    ind_soc_enable_set(1);
     
     printf("\n\nHello, World!\n\n");
     return 0;
@@ -72,8 +38,8 @@ ReorderingReturnType test_reordering(void)
     of_flow_add_t* first_add, second_add;
     of_flow_delete_t* del;
     
-    /* of_match_t match; */
-    /* uint16_t priority; */
+    of_match_t match;
+    uint16_t priority;
 
     return NO_REORDERING;
 }
