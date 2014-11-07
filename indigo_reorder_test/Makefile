@@ -2,6 +2,7 @@ CC=gcc
 INDIGO_DIR=../indigo/
 LIB_DIR=build/gcc-local/lib/
 LIB_FLAGS=-L$(LIB_DIR)
+REORDER_BIN=reorder
 
 # note: important for cjson.a to come last.  This is because linker
 # algorithm works in such a way that when linking static files, will
@@ -63,5 +64,11 @@ include $(BUILDER)/dependmodules.mk
 include $(BUILDER)/targets.mk
 
 all:
-	$(CC) $(LIB_FLAGS) $(INC_FLAGS) main.c $(LINKED_LIBS) -lm -o reorder
+	$(CC) $(LIB_FLAGS) $(INC_FLAGS) main.c $(LINKED_LIBS) -lm -o $(REORDER_BIN)
 
+clean:
+	rm -f dependmodules.x
+	rm -f Reorder.mk
+	rm -f Reorder_utest.mk
+	rm -rf build
+	rm -f $(REORDER_BIN)
