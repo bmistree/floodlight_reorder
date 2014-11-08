@@ -110,7 +110,8 @@ int main (int argc, char** argv)
         printf("\nReordering error\n");
         break;
     }
-    printf("\n\nHello, World!\n\n");
+
+    
     return 0;
 }
 
@@ -123,6 +124,23 @@ void do_barrier()
     for (idx = 0; idx < 1000; ++idx)
         ind_soc_select_and_run(0);
 }
+
+static int outstanding_op_cnt=0;
+
+void
+indigo_cxn_pause(indigo_cxn_id_t cxn_id)
+{
+    assert(outstanding_op_cnt >= 0);
+    outstanding_op_cnt++;
+}
+
+void
+indigo_cxn_resume(indigo_cxn_id_t cxn_id)
+{
+    assert(outstanding_op_cnt > 0);
+    outstanding_op_cnt--;
+}
+
 
 static void
 delete_all_entries(ft_instance_t ft)
@@ -147,28 +165,32 @@ ReorderingReturnType test_reordering(void)
     // c99 mode: must declare all used variables at top of function.
     // ugh.
     of_flow_add_t *first_add, *second_add;
-    /* of_flow_delete_t* del; */
     
     // FIRST: add an entry, then issue a delete, then issue another
     // add (for a different entry)
 
     // add an entry
+    printf("\n\tAdding entry\n");
     first_add = of_flow_add_new(OF_VERSION_1_0);
-    of_flow_add_flags_set(first_add, 0);
+    of_flow_add_OF_VERSION_1_0_populate(first_add, 1);
+    of_flow_add_flags_set(first_add, 0);    
     handle_message(first_add);
 
-    // delete all entries
+    /* delete all entries */
+    printf("\n\tRemoving all entries\n");
     delete_all_entries(ind_core_ft);
-
+    
     // add second entry
+    printf("\n\tAdding second entry\n");
     second_add = of_flow_add_new(OF_VERSION_1_0);
-    of_flow_add_flags_set(second_add, 1);
+    of_flow_add_OF_VERSION_1_0_populate(second_add, 2);
+    of_flow_add_flags_set(second_add, 0);    
     handle_message(second_add);
 
     // SECOND: issue barrier so that all commands finish
-    printf("\nExecuting barrier\n");
+    printf("\n\tExecuting barrier\n");
     do_barrier();
-
+    
 
     // THIRD: Check number of table entries.  If had reordering,
     // will have 0 table entries (delete reordered after add).
