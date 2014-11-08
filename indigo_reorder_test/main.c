@@ -17,6 +17,7 @@ typedef enum{REORDERING, NO_REORDERING, REORDERING_ERROR} ReorderingReturnType;
 ReorderingReturnType test_reordering(void);
 void handle_message(of_object_t *obj);
 
+#define INDIGO_MEM_CLEAR(dest, bytes)       memset(dest, 0, bytes)
 
 static indigo_error_t
 op_entry_create(void *table_priv, indigo_cxn_id_t cxn_id,
@@ -96,13 +97,22 @@ int main (int argc, char** argv)
 
     indigo_core_table_register(0, "test", &test_ops, NULL);
     
-    
-    
+
+    switch(test_reordering())
+    {
+      case REORDERING:
+        printf("\nGot reordering\n");
+        break;
+      case NO_REORDERING:
+        printf("\nNo reordering\n");
+        break;
+      case REORDERING_ERROR:
+        printf("\nReordering error\n");
+        break;
+    }
     printf("\n\nHello, World!\n\n");
     return 0;
 }
-
-
 
 void do_barrier()
 {
@@ -114,20 +124,54 @@ void do_barrier()
         ind_soc_select_and_run(0);
 }
 
+static void
+delete_all_entries(ft_instance_t ft)
+{
+    of_flow_delete_t *flow_del;
+    of_match_t match;
+
+    INDIGO_MEM_CLEAR(&match, sizeof(match));
+    flow_del = of_flow_delete_new(OF_VERSION_1_0);
+    if (of_flow_delete_match_set(flow_del, &match) !=
+        INDIGO_ERROR_NONE)
+    {
+        printf("\nError deleting entries\n");
+        assert(false);
+    }
+    handle_message(flow_del);
+}
+
+
 ReorderingReturnType test_reordering(void)
 {
-    // c99 mode: must declare all used variables at top of function.  ug.
-    of_flow_add_t* first_add, second_add;
-    of_flow_delete_t* del;
+    // c99 mode: must declare all used variables at top of function.
+    // ugh.
+    of_flow_add_t *first_add, *second_add;
+    /* of_flow_delete_t* del; */
     
-    of_match_t match;
-    uint16_t priority;
+    // FIRST: add an entry, then issue a delete, then issue another
+    // add (for a different entry)
 
+    // add an entry
+    first_add = of_flow_add_new(OF_VERSION_1_0);
+    of_flow_add_flags_set(first_add, 0);
+    handle_message(first_add);
 
-    // issue barrier so that all commands finish
+    // delete all entries
+    delete_all_entries(ind_core_ft);
+
+    // add second entry
+    second_add = of_flow_add_new(OF_VERSION_1_0);
+    of_flow_add_flags_set(second_add, 1);
+    handle_message(second_add);
+
+    // SECOND: issue barrier so that all commands finish
     printf("\nExecuting barrier\n");
     do_barrier();
 
+
+    // THIRD: Check number of table entries.  If had reordering,
+    // will have 0 table entries (delete reordered after add).
     if (ind_core_ft->current_count == 0)
         return REORDERING;
     else if (ind_core_ft->current_count == 1)
@@ -140,6 +184,7 @@ ReorderingReturnType test_reordering(void)
     assert(false);
     return REORDERING_ERROR;
 }
+
 
 void handle_message(of_object_t *obj)
 {
