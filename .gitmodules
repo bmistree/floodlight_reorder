@@ -4,3 +4,6 @@
 [submodule "FlowLog"]
 	path = FlowLog
 	url = https://github.com/tnelson/FlowLog.git
+[submodule "frenetic"]
+	path = frenetic
+	url = https://github.com/frenetic-lang/frenetic.git
