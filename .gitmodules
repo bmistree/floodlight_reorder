@@ -1,3 +1,6 @@
 [submodule "indigo"]
 	path = indigo
 	url = https://github.com/floodlight/indigo.git
+[submodule "FlowLog"]
+	path = FlowLog
+	url = https://github.com/tnelson/FlowLog.git
