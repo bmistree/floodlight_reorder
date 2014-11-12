@@ -7,3 +7,6 @@
 [submodule "frenetic"]
 	path = frenetic
 	url = https://github.com/frenetic-lang/frenetic.git
+[submodule "pyretic"]
+	path = pyretic
+	url = https://github.com/frenetic-lang/pyretic.git
